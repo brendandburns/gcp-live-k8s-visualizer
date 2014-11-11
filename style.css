@@ -1,0 +1,41 @@
+.wide {
+  width: 150px;
+}
+
+.service {
+  background-color: rgb(0,153,57);
+  color: white;
+}
+
+.controller {
+  background-color:rgb(51,105,232);
+  color: white;
+}
+
+.pod {
+  width: 100px;
+  background-color:#eeeeef;
+}
+
+.logo {
+  background: url('titlelogo.svg');
+  background-repeat: no-repeat;
+  height: 150px;
+  width: 600px;
+}
+
+.navbar-logo {
+  margin-left: 10px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+#nav-logo-img {
+  height: 42px;
+}
+
+.navbar {
+  background-color: #447AE8;
+  border: 0px;
+  border-radius: 0;
+}
