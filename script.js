@@ -76,7 +76,7 @@ var connectControllers = function() {
 	}
 	for (var i = 0; i < services.items.length; i++) {
 		var service = services.items[i];
-                if (service.id == 'kubernetes') { continue; }
+                if (service.id == 'kubernetes' || service.id == 'kubernetes-ro') { continue; }
 		for (var j = 0; j < pods.items.length; j++) {
 			var pod = pods.items[j];
 			if (matchesLabelQuery(pod.labels, service.selector)) {
