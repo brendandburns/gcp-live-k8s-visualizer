@@ -17,6 +17,16 @@
   background-color:#eeeeef;
 }
 
+.window {
+  line-height: 1em;
+  display: table;
+}
+
+.window span {
+  display: table-cell;
+  vertical-align: middle;
+}
+
 .logo {
   background: url('titlelogo.svg');
   background-repeat: no-repeat;
@@ -35,6 +45,10 @@
 }
 
 .navbar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
   background-color: #447AE8;
   border: 0px;
   border-radius: 0;
