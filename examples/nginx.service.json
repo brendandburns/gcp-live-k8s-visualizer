@@ -1,0 +1,28 @@
+{
+  "kind": "Service",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "nginx",
+    "labels": {
+      "name": "nginx",
+      "app": "sample"
+    }
+  },
+  "spec": {
+    "ports": [
+      {
+        "name": "http",
+        "port": 9001,
+        "targetPort": 80,
+        "protocol": "TCP"
+      }
+    ],
+    "publicIPs": [
+      "10.145.1.3",
+      "10.145.1.4"
+    ],
+    "selector": {
+      "name": "frontend"
+    }
+  }
+}
