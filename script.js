@@ -63,14 +63,14 @@ var connectControllers = function() {
     connectUses();
 	for (var i = 0; i < controllers.items.length; i++) {
 		var controller = controllers.items[i];
-    console.log("controller: " + controller.metadata.name)
+    //console.log("controller: " + controller.metadata.name)
 		for (var j = 0; j < pods.items.length; j++) {
 			var pod = pods.items[j];
 			if (pod.metadata.labels.name == controller.metadata.labels.name) {
         if (controller.metadata.labels.version && pod.metadata.labels.version && (controller.metadata.labels.version != pod.metadata.labels.version)) {
           continue;
         }
-        console.log('connect controller: ' + 'controller-' + controller.metadata.name + ' to pod-' + pod.metadata.name);
+        //console.log('connect controller: ' + 'controller-' + controller.metadata.name + ' to pod-' + pod.metadata.name);
 				jsPlumb.connect({
 					source: 'controller-' + controller.metadata.name,
 					target: 'pod-' + pod.metadata.name,
@@ -87,7 +87,7 @@ var connectControllers = function() {
     //            if (service.metadata.name == 'kubernetes' || service.metadata.name == 'skydns' || service.metadata.name == 'kubernetes-ro') { continue; }
 		for (var j = 0; j < pods.items.length; j++) {
 			var pod = pods.items[j];
-      console.log('connect service: ' + 'service-' + service.metadata.name + ' to pod-' + pod.metadata.name);
+      //console.log('connect service: ' + 'service-' + service.metadata.name + ' to pod-' + pod.metadata.name);
 			if (matchesLabelQuery(pod.metadata.labels, service.spec.selector)) {
 				jsPlumb.connect(
 					{
@@ -123,10 +123,10 @@ var connectUses = function() {
 		if (colorIx >= colors.length) { colorIx = 0;};
 		$.each(pods.items, function(i, pod) {
         var podKey = pod.metadata.labels.name;
-         console.log('connect uses key: ' +key + ', ' + podKey);
+         //console.log('connect uses key: ' +key + ', ' + podKey);
 			if (podKey == key) {
 				$.each(list, function(j, serviceId) {
-          console.log('connect: ' + 'pod-' + pod.metadata.name + ' to service-' + serviceId);
+          //console.log('connect: ' + 'pod-' + pod.metadata.name + ' to service-' + serviceId);
 					jsPlumb.connect(
 					{
 						source: 'pod-' + pod.metadata.name,
@@ -150,7 +150,7 @@ var connectUses = function() {
 var makeGroupOrder = function() {
   var groupScores = {};
   $.each(groups, function(key, val) {
-    console.log("group key: " + key);
+    //console.log("group key: " + key);
 		if (!groupScores[key]) {
 		  groupScores[key] = 0;
 		}
@@ -177,7 +177,7 @@ var makeGroupOrder = function() {
 	});
   groupOrder.sort(function(a, b) { return groupScores[a] - groupScores[b]; });
 
-	console.log(groupOrder);
+	//console.log(groupOrder);
   return groupOrder;
 };
 
@@ -197,17 +197,19 @@ var renderGroups = function() {
 		var div = $('<div/>');
 		var x = 100;
 		$.each(list, function(index, value) {
-      console.log("render groups: " + value.type + ", " + value.metadata.name + ", " + index)
+      //console.log("render groups: " + value.type + ", " + value.metadata.name + ", " + index)
 			var eltDiv = null;
+      console.log(value);
+      var phase = value.status.phase ? value.status.phase.toLowerCase() : '';
 			if (value.type == "pod") {
-				eltDiv = $('<div class="window pod" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
+				eltDiv = $('<div class="window pod ' + phase + '" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
 					'" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
 				eltDiv.html('<span>' + 
           truncate(value.metadata.name, 8) +
           (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") + 
           '</span>');
 			} else if (value.type == "service") {
-				eltDiv = $('<div class="window wide service" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
+				eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
 					'" style="left: ' + 75 + '; top: ' + y + '"/>');
 				eltDiv.html('<span>' + 
           value.metadata.name +
@@ -218,7 +220,7 @@ var renderGroups = function() {
 			} else {
         var key = 'controller-' + value.metadata.labels.name;
         counts[key] = key in counts ? counts[key] + 1 : 0;
-        console.log("COUNTS? " + key + ", " + counts[key]);
+        //console.log("COUNTS? " + key + ", " + counts[key]);
 				eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="controller-' + value.metadata.name +
 					'" style="left: ' + (900 + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
 				eltDiv.html('<span>' + 
@@ -263,15 +265,21 @@ var loadData = function() {
 
 	var req2 = $.getJSON("/api/v1/replicationcontrollers?labelSelector=visualize%3Dtrue", function( data ) {
 		controllers = data;
-		$.each(data.items, function(key, val) { val.type = 'replicationController'; console.log("Controller ID = " + val.metadata.name) });
+		$.each(data.items, function(key, val) {
+      val.type = 'replicationController';
+      //console.log("Controller ID = " + val.metadata.name)
+    });
 	});
 
 
 	var req3 = $.getJSON("/api/v1/services?labelSelector=visualize%3Dtrue", function( data ) {
 		services = data;
-		console.log("loadData(): Services");
-		console.log(services);
-		$.each(data.items, function(key, val) { val.type = 'service'; console.log("service ID = " + val.metadata.name)});
+		//console.log("loadData(): Services");
+		//console.log(services);
+		$.each(data.items, function(key, val) {
+      val.type = 'service';
+      //console.log("service ID = " + val.metadata.name)
+    });
 	});
 	$.when(req1, req2, req3).then(function() {
 		deferred.resolve();
@@ -281,7 +289,7 @@ var loadData = function() {
 
 function refresh(instance) {
 
-	console.log("Refresh");
+	//console.log("Refresh");
 	pods = [];
 	services = [];
 	controllers = [];

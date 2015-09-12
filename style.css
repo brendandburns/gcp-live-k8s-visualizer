@@ -17,6 +17,10 @@
   background-color:#eeeeef;
 }
 
+.pending {
+  background-color:yellow;
+}
+
 .window {
   line-height: 1em;
   display: table;
