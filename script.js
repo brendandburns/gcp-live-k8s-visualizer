@@ -1,25 +1,25 @@
 /**
- Copyright 2014 Google Inc. All rights reserved.
+Copyright 2014 Google Inc. All rights reserved.
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
- http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- */
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 
-var truncate = function (str, width) {
-    if (str && str.length > width) {
-        return str.slice(0, width) + "...";
-    }
-    return str;
-};
+var truncate = function(str, width) {
+	if (str.length > width) {
+		return str.slice(0, width) + "...";
+	}
+	return str;
+}
 
 var pods = [];
 var services = [];
@@ -43,14 +43,21 @@ var insertByName = function(index, value) {
 	list.push(value);
 };
 
-var groupByName = function () {
-    $.each(pods.items, insertByName);
-    $.each(controllers.items, insertByName);
-    $.each(services.items, insertByName);
+var groupByName = function() {
+	$.each(pods.items, insertByName);
+	$.each(controllers.items, insertByName);
+	$.each(services.items, insertByName);
 };
 
-var matchesLabelQuery = function (labels, selector) {
-    var match = true;
+var matchesLabelQuery = function(labels, selector) {
+	var match = true;
+	$.each(selector, function(key, value) {
+		if (labels[key] != value) {
+			match = false;
+		}
+	});
+	return match;
+}
 
 var connectControllers = function() {
     connectUses();
@@ -93,55 +100,6 @@ var connectControllers = function() {
 			}
 		}
 	}
-};
-
-var connectControllers = function () {
-    //connectUses();
-    for (var i = 0; i < controllers.items.length; i++) {
-        var controller = controllers.items[i];
-        for (var j = 0; j < pods.items.length; j++) {
-            var pod = pods.items[j];
-            if (pod.metadata.labels && controller.metadata && controller.metadata.labels && controller.metadata.labels.name &&
-                pod.metadata.labels['name'] == controller.metadata.labels.name) {
-
-                jsPlumb.connect({
-                    source: controller.metadata.uid,
-                    target: pod.metadata.uid,
-                    anchors: ["Bottom", "Bottom"],
-                    paintStyle: {lineWidth: 5, strokeStyle: 'rgb(51,105,232)'},
-                    joinStyle: "round",
-                    endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 7},
-                    connector: ["Flowchart", {cornerRadius: 5}]
-                });
-            }
-        }
-    }
-
-
-    for (var i = 0; i < services.items.length; i++) {
-        var service = services.items[i];
-        if (service.metadata.name == 'kubernetes') {
-            continue;
-        }
-
-        for (var j = 0; j < pods.items.length; j++) {
-
-            var pod = pods.items[j];
-            if (matchesLabelQuery(pod.metadata.labels, service.metadata.name)) {
-
-                jsPlumb.connect(
-                    {
-                        source: service.metadata.name,
-                        target: pod.metadata.uid,
-                        anchors: ["Bottom", "Top"],
-                        paintStyle: {lineWidth: 5, strokeStyle: 'rgb(0,153,57)'},
-                        endpointStyle: {fillStyle: 'rgb(0,153,57)', radius: 7},
-                        joinStyle: "round",
-                        connector: ["Flowchart", {cornerRadius: 5}]
-                    });
-            }
-        }
-    }
 };
 
 var colors = [
@@ -308,12 +266,6 @@ var loadData = function() {
 		$.each(data.items, function(key, val) { val.type = 'replicationController'; console.log("Controller ID = " + val.metadata.name) });
 	});
 
-    var req2 = $.getJSON("/api/v1/replicationcontrollers", function (data) {
-        controllers = data;
-        $.each(data.items, function (key, val) {
-            val.type = 'replicationController';
-        });
-    });
 
 	var req3 = $.getJSON("/api/v1/services?labelSelector=visualize%3Dtrue", function( data ) {
 		services = data;
