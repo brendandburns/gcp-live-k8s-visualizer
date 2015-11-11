@@ -14,11 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var truncate = function(str, width) {
+var truncate = function(str, width, left) {
   if (!str) return "";
 
 	if (str.length > width) {
-		return "..." + str.slice(str.length - width, str.length);
+    if (left) {
+  		return str.slice(0, width) + "...";
+    } else {
+  		return "..." + str.slice(str.length - width, str.length);
+    }
 	}
 	return str;
 }
@@ -134,8 +138,10 @@ var connectUses = function() {
 						source: 'pod-' + pod.metadata.name,
 						target: 'service-' + serviceId,
 						endpoint: "Blank",
-						anchors:["Bottom", "Right"],
-						connector: "Straight",
+						//anchors:["Bottom", "Top"],
+            anchors:[[ 0.5, 1, 0, 1, -30, 0 ], "Top"],
+						//connector: "Straight",
+            connector: ["Bezier", { curviness:75 }],
 						paintStyle:{lineWidth:2,strokeStyle:color},
 						overlays:[
     						[ "Arrow", { width:15, length:30, location: 0.3}],
@@ -233,7 +239,7 @@ var renderGroups = function() {
 				eltDiv = $('<div class="window pod ' + phase + '" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
 					'" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
 				eltDiv.html('<span>' + 
-          truncate(value.metadata.labels.name, 14) +
+          truncate(value.metadata.labels.name, 8, true) +
           (value.metadata.labels.version ? "<br/>" + value.metadata.labels.version : "") + "<br/><br/>" +
           "[" + (value.spec.nodeName ? truncate(value.spec.nodeName, 5) : "None") + "]" +
           '</span>');
