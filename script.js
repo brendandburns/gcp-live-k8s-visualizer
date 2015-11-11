@@ -219,14 +219,14 @@ var renderGroups = function() {
           '</span>');
 			} else {
         var key = 'controller-' + value.metadata.labels.name;
-        //counts[key] = key in counts ? counts[key] + 1 : 0;
+        counts[key] = key in counts ? counts[key] + 1 : 0;
 				//eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="controller-' + value.metadata.name +
 				//	'" style="left: ' + (900 + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
         var minLeft = 900;
         var calcLeft = 400 + (value.status.replicas * 130);
         var left = minLeft > calcLeft ? minLeft : calcLeft;
 				eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="controller-' + value.metadata.name +
-					'" style="left: ' + left + '; top: ' + (y + 100) + '"/>');
+					'" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
 				eltDiv.html('<span>' + 
           value.metadata.name +
           (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") + 
