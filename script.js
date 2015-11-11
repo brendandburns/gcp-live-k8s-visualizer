@@ -15,8 +15,10 @@ limitations under the License.
 */
 
 var truncate = function(str, width) {
+  if (!str) return "";
+
 	if (str.length > width) {
-		return str.slice(0, width) + "...";
+		return "..." + str.slice(str.length - width, str.length);
 	}
 	return str;
 }
@@ -181,6 +183,32 @@ var makeGroupOrder = function() {
   return groupOrder;
 };
 
+var renderNodes = function() {
+	var y = 25;
+	var x = 100;
+  $.each(nodes.items, function(index, value) {
+    console.log(value);
+		var div = $('<div/>');
+    var ready = false;
+    $.each(value.status.conditions, function(index, condition) {
+      if (condition.type === 'Ready') {
+        ready = (condition.status === 'True' ? 'ready' : 'not_ready' )
+      }
+    });
+
+ 		var eltDiv = $('<div class="window node ' + ready + '" title="' + value.metadata.name + '" id="node-' + value.metadata.name +
+                 '" style="left: ' + (x + 250) + '; top: ' + y + '"/>');
+	  eltDiv.html('<span><b>Node</b><br/><br/>' + 
+          truncate(value.metadata.name, 5) +
+          '</span>');
+    div.append(eltDiv);
+
+	  var elt = $('.nodesbar');
+		elt.append(div);
+
+    x += 120;
+ });
+}
 
 var renderGroups = function() {
 	var elt = $('#sheet');
@@ -205,8 +233,9 @@ var renderGroups = function() {
 				eltDiv = $('<div class="window pod ' + phase + '" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
 					'" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
 				eltDiv.html('<span>' + 
-          truncate(value.metadata.name, 8) +
-          (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") + 
+          truncate(value.metadata.labels.name, 14) +
+          (value.metadata.labels.version ? "<br/>" + value.metadata.labels.version : "") + "<br/><br/>" +
+          "[" + (value.spec.nodeName ? truncate(value.spec.nodeName, 5) : "None") + "]" +
           '</span>');
 			} else if (value.type == "service") {
 				eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
@@ -285,18 +314,30 @@ var loadData = function() {
       //console.log("service ID = " + val.metadata.name)
     });
 	});
-	$.when(req1, req2, req3).then(function() {
+
+	var req4 = $.getJSON("/api/v1/nodes", function( data ) {
+		nodes = data;
+		//console.log("loadData(): Services");
+		//console.log(nodes);
+		$.each(data.items, function(key, val) {
+      val.type = 'node';
+      //console.log("service ID = " + val.metadata.name)
+    });
+	});
+
+	$.when(req1, req2, req3, req4).then(function() {
 		deferred.resolve();
 	});
+
+
 	return deferred;
 }
 
 function refresh(instance) {
-
-	//console.log("Refresh");
 	pods = [];
 	services = [];
 	controllers = [];
+  nodes = [];
 	uses = {};
 	groups = {};
 
@@ -304,6 +345,7 @@ function refresh(instance) {
 	$.when(loadData()).then(function() {
 		groupByName();
 		$('#sheet').empty();
+    renderNodes();
 		renderGroups();
 		connectControllers();
 
