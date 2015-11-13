@@ -205,7 +205,7 @@ var renderNodes = function() {
  		var eltDiv = $('<div class="window node ' + ready + '" title="' + value.metadata.name + '" id="node-' + value.metadata.name +
                  '" style="left: ' + (x + 250) + '; top: ' + y + '"/>');
 	  eltDiv.html('<span><b>Node</b><br/><br/>' + 
-          truncate(value.metadata.name, 5) +
+          truncate(value.metadata.name, 6) +
           '</span>');
     div.append(eltDiv);
 
@@ -239,9 +239,9 @@ var renderGroups = function() {
 				eltDiv = $('<div class="window pod ' + phase + '" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
 					'" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
 				eltDiv.html('<span>' + 
-          truncate(value.metadata.labels.name, 8, true) +
+          truncate(value.metadata.name, 8, true) +
           (value.metadata.labels.version ? "<br/>" + value.metadata.labels.version : "") + "<br/><br/>" +
-          "[" + (value.spec.nodeName ? truncate(value.spec.nodeName, 5) : "None") + "]" +
+          "(" + (value.spec.nodeName ? truncate(value.spec.nodeName, 6) : "None")  +")" +
           '</span>');
 			} else if (value.type == "service") {
 				eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
@@ -357,7 +357,7 @@ function refresh(instance) {
 
 		setTimeout(function() {
 			refresh(instance);
-		}, 1000);
+		}, 2000);
   });
 }
 
