@@ -33,10 +33,10 @@ var insertByName = function (index, value) {
     if (!value || !value.metadata.labels) {
         return;
     }
-    var list = groups[value.metadata.labels.name];
+    var list = groups[value.metadata.labels.run];
     if (!list) {
         list = [];
-        groups[value.metadata.labels.name] = list;
+        groups[value.metadata.labels.run] = list;
     }
     list.push(value);
 };
@@ -53,7 +53,7 @@ var matchesLabelQuery = function (labels, selector) {
     if(!labels) { return false; }
 
     $.each(labels, function (key, value) {
-        if (labels[key] !== value) {
+        if (selector[key] !== value) {
             match = false;
         }
     });
@@ -66,9 +66,8 @@ var connectControllers = function () {
         var controller = controllers.items[i];
         for (var j = 0; j < pods.items.length; j++) {
             var pod = pods.items[j];
-            if (pod.metadata.labels && controller.metadata && controller.metadata.labels && controller.metadata.labels.name &&
-                pod.metadata.labels['name'] == controller.metadata.labels.name) {
-
+            if (pod.metadata.labels && controller.metadata && controller.metadata.labels && controller.metadata.labels.run &&
+                pod.metadata.labels['run'] == controller.metadata.labels.run) {
                 jsPlumb.connect({
                     source: controller.metadata.uid,
                     target: pod.metadata.uid,
@@ -92,11 +91,10 @@ var connectControllers = function () {
         for (var j = 0; j < pods.items.length; j++) {
 
             var pod = pods.items[j];
-            if (matchesLabelQuery(pod.metadata.labels, service.metadata.name)) {
-
+            if (matchesLabelQuery(pod.metadata.labels, service.spec.selector)) {
                 jsPlumb.connect(
                     {
-                        source: service.metadata.name,
+                        source: service.metadata.uid,
                         target: pod.metadata.uid,
                         anchors: ["Bottom", "Top"],
                         paintStyle: {lineWidth: 5, strokeStyle: 'rgb(0,153,57)'},
@@ -123,13 +121,7 @@ var connectUses = function () {
         colorIx++;
         $.each(pods.items, function (i, pod) {
 
-            if (pod.metadata.labels && pod.metadata.labels.name == key) {
-
-            console.log('name: ', pod.metadata.labels.name);
-            console.log('key: ', key);
-
-                console.log('color: ', color);
-
+            if (pod.metadata.labels && pod.metadata.labels.run == key) {
                 $.each(list, function (j, serviceId) {
                     jsPlumb.connect(
                         {
@@ -165,6 +157,11 @@ var makeGroupOrder = function () {
             }
         });
     });
+    $.each(groups, function(key, value) {
+      if (!groupScores[key]) {
+        groupScores[key] = 0;
+      }
+    });
     var groupOrder = [];
     $.each(groupScores, function (key, value) {
         groupOrder.push(key);
@@ -195,7 +192,7 @@ var renderGroups = function () {
                     '" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
                 eltDiv.text(truncate(value.metadata.name, 8));
             } else if (value.type == "service") {
-                eltDiv = $('<div class="window wide service" id="' + value.metadata.name +
+                eltDiv = $('<div class="window wide service" id="' + value.metadata.uid +
                     '" style="left: ' + 75 + '; top: ' + y + '"/>');
                 eltDiv.text(truncate(value.metadata.name, 20));
             } else {
@@ -223,27 +220,26 @@ var insertUse = function (name, use) {
 
 var loadData = function () {
     var deferred = new $.Deferred();
-    var req1 = $.getJSON("/api/v1/pods", function (data) {
+    var req1 = $.getJSON("/api/v1/namespaces/default/pods", function (data) {
         pods = data;
         $.each(data.items, function (key, val) {
             val.type = 'pod';
 
             if (val.metadata.labels) {
                 if (val.metadata.labels.uses) {
-                    if (!uses[val.metadata.labels.name]) {
-                        uses[val.metadata.labels.name] = val.metadata.labels.uses.split(",");
+                    if (!uses[val.metadata.labels.run]) {
+                        uses[val.metadata.labels.run] = val.metadata.labels.uses.split(",");
                     } else {
                         $.each(val.metadata.labels.uses.split(","), function (ix, use) {
-                            insertUse(val.metadata.labels.name, use);
+                            insertUse(val.metadata.labels.run, use);
                         });
                     }
                 }
             }
         });
-        console.log(uses);
     });
 
-    var req2 = $.getJSON("/api/v1/replicationcontrollers", function (data) {
+    var req2 = $.getJSON("/api/v1/namespaces/default/replicationcontrollers", function (data) {
         controllers = data;
         $.each(data.items, function (key, val) {
             val.type = 'replicationController';
@@ -251,7 +247,7 @@ var loadData = function () {
     });
 
 
-    var req3 = $.getJSON("/api/v1/services", function (data) {
+    var req3 = $.getJSON("/api/v1/namespaces/default/services", function (data) {
         services = data;
         $.each(data.items, function (key, val) {
             val.type = 'service';
