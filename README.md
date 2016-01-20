@@ -22,7 +22,8 @@ That's it.  The visualizer uses labels to organize the visualization.  In partic
    * ```sudo make TARGET=linux2628 USE_PCRE=1 USE_OPENSSL=1 USE_ZLIB=1```
    * Create the following configuration file in /etc/haproxy.cfg:
      
-     ```global
+     ```
+    global
         daemon
         maxconn 256
 
@@ -38,7 +39,8 @@ That's it.  The visualizer uses labels to organize the visualization.  In partic
 
 
     backend proxy-backend
-        server proxy 127.0.0.1:8001```
+        server proxy 127.0.0.1:8001
+   ```
 
    * Startup the proxy: ```sudo ./haproxy -f /etc/haproxy.cfg```
    * Startup kubernetes proxy:
