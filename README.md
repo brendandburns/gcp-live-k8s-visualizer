@@ -42,8 +42,15 @@ That's it.  The visualizer uses labels to organize the visualization.  In partic
         server proxy 127.0.0.1:8001
    ```
 
-   * Startup the proxy: ```sudo ./haproxy -f /etc/haproxy.cfg```
-   * Startup kubernetes proxy:
-   * Get api server location, username, and password from kubernetes: ```kubectl config view```
-   * Create kubernetes proxy: kubectl proxy --www=path/to/k-visualizer/gcp-live-k8s-visualizer --username=admin --password=<password>  --accept-hosts="" --server="<server>" &
-   * Access visualizer via Public IP of EC2 instance on which you created it: ```http://<public ip>/static/
+   * Startup the proxy: ```
+    sudo ./haproxy -f /etc/haproxy.cfg
+    ```
+   * Startup kubernetes proxy by doing the following:
+   * Get api server location, username, and password from kubernetes: ```
+   kubectl config view
+   ```
+   * Create kubernetes proxy:```
+   kubectl proxy --www=path/to/k-visualizer/gcp-live-k8s-visualizer --username=admin --password=<password>  --accept-hosts="" --server="<server>" &
+   ```
+   * Access visualizer via Public IP of EC2 instance on which you created it: ```
+   http://<public ip>/static/```
