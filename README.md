@@ -5,7 +5,11 @@ This is a simple visualizer for use with the Kubernetes API.
 ### Usage:
    * First install a Kubernetes or Container Engine Cluster
    * ```git clone https://github.com/brendandburns/gcp-live-k8s-visualizer.git```
-   * ```kubecfg proxy --www=path/to/gcp-live-k8s-visualizer```
+   * ```kubectl proxy --www=path/to/gcp-live-k8s-visualizer --www-prefix/my-mountpoint/ --api-prefix=/api/```
+
+Then
+
+    http://127.0.0.1:8001/my-mountpoint/
 
 That's it.  The visualizer uses labels to organize the visualization.  In particular it expects that
 
