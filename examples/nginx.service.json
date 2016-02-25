@@ -4,6 +4,7 @@
   "metadata": {
     "name": "nginx",
     "labels": {
+      "visualize":"true",
       "name": "nginx",
       "app": "sample"
     }

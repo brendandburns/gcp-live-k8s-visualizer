@@ -4,6 +4,7 @@
   "metadata":{
     "name":"nginx",
     "labels":{
+      "visualize":"true",
       "name":"nginx"
     }
   },
@@ -15,6 +16,7 @@
     "template":{
       "metadata":{
         "labels":{
+          "visualize":"true",
           "name":"nginx",
           "app": "sample",
           "version": "0.0.1",
