@@ -195,7 +195,7 @@ var renderNodes = function() {
   $.each(nodes.items, function(index, value) {
     console.log(value);
 		var div = $('<div/>');
-    var ready = false;
+    var ready = 'not_ready';
     $.each(value.status.conditions, function(index, condition) {
       if (condition.type === 'Ready') {
         ready = (condition.status === 'True' ? 'ready' : 'not_ready' )
@@ -236,6 +236,9 @@ var renderGroups = function() {
       console.log(value);
       var phase = value.status.phase ? value.status.phase.toLowerCase() : '';
 			if (value.type == "pod") {
+        if ('deletionTimestamp' in value.metadata) {
+          phase = 'terminating';
+        }
 				eltDiv = $('<div class="window pod ' + phase + '" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
 					'" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
 				eltDiv.html('<span>' + 

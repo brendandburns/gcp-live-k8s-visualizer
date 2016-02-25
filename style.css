@@ -71,3 +71,7 @@
 .not_ready {
   background-color: red;
 }
+
+.terminating {
+  background-color: red;
+}
