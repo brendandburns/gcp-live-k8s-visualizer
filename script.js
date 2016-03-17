@@ -195,18 +195,18 @@ var renderGroups = function () {
             if (value.type == "pod") {
                 eltDiv = $('<div class="window pod" id="' + value.metadata.uid +
                     '" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
-                eltDiv.text(truncate(value.metadata.name, 8));
             } else if (value.type == "service") {
                 eltDiv = $('<div class="window wide service" id="' + value.metadata.uid +
                     '" style="left: ' + 75 + '; top: ' + y + '"/>');
-                eltDiv.text(truncate(value.metadata.name, 20));
             } else {
                 eltDiv = $('<div class="window wide controller" id="' + value.metadata.uid +
                     '" style="left: ' + (x + 300) + '; top: ' + (y + 100 + controllersCount * 100) +
                     '"/>');
-                eltDiv.text(truncate(value.metadata.name, 20));
                 controllersCount += 1;
             }
+            span = $('<span />');
+            span.text(truncate(value.metadata.name, 8));
+            eltDiv.append(span)
             div.append(eltDiv);
             x += 130;
         });

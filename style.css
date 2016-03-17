@@ -39,3 +39,7 @@
   border: 0px;
   border-radius: 0;
 }
+
+.window span {
+  vertical-align: middle;
+}
