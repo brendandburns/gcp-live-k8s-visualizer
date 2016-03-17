@@ -26,7 +26,6 @@
 
 .navbar-logo {
   margin-left: 10px;
-  margin-top: 5px;
   text-align: left;
 }
 
@@ -42,4 +41,20 @@
 
 .window span {
   vertical-align: middle;
+}
+
+#main {
+  margin-top: 0;
+  width: auto;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+}
+
+.demo {
+  position: absolute;
+  top: 42px;
+  bottom: 0;
+  height: auto;
+  margin-bottom: 0;
 }
