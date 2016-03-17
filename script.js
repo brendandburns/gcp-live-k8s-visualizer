@@ -61,7 +61,7 @@ var matchesLabelQuery = function (labels, selector) {
 };
 
 var connectControllers = function () {
-    //connectUses();
+    connectUses();
     for (var i = 0; i < controllers.items.length; i++) {
         var controller = controllers.items[i];
         for (var j = 0; j < pods.items.length; j++) {
@@ -91,6 +91,7 @@ var connectControllers = function () {
         for (var j = 0; j < pods.items.length; j++) {
 
             var pod = pods.items[j];
+
             if (matchesLabelQuery(pod.metadata.labels, service.spec.selector)) {
                 jsPlumb.connect(
                     {
@@ -120,23 +121,26 @@ var connectUses = function () {
         var color = colors[colorIx];
         colorIx++;
         $.each(pods.items, function (i, pod) {
-
             if (pod.metadata.labels && pod.metadata.labels.run == key) {
-                $.each(list, function (j, serviceId) {
-                    jsPlumb.connect(
-                        {
-                            source: pod.metadata.uid,
-                            target: serviceId,
-                            endpoint: "Blank",
-                            anchors: ["Bottom", "Top"],
-                            connector: "Straight",
-                            paintStyle: {lineWidth: 5, strokeStyle: color},
-                            overlays: [
-                                ["Arrow", {width: 15, length: 30, location: 0.3}],
-                                ["Arrow", {width: 15, length: 30, location: 0.6}],
-                                ["Arrow", {width: 15, length: 30, location: 1}],
-                            ],
-                        });
+                $.each(list, function (j, serviceKey) {
+                  $.each(services.items, function (j, service) {
+                    if (service.metadata.labels && service.metadata.labels.run == serviceKey) {
+                        jsPlumb.connect(
+                            {
+                                source: pod.metadata.uid,
+                                target: service.metadata.uid,
+                                endpoint: "Blank",
+                                anchors: ["Bottom", "Top"],
+                                connector: "Straight",
+                                paintStyle: {lineWidth: 5, strokeStyle: color},
+                                overlays: [
+                                    ["Arrow", {width: 15, length: 30, location: 0.3}],
+                                    ["Arrow", {width: 15, length: 30, location: 0.6}],
+                                    ["Arrow", {width: 15, length: 30, location: 1}],
+                                ],
+                            });
+                    }
+                  });
                 });
             }
         });
