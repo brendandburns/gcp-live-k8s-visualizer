@@ -66,8 +66,8 @@ var connectControllers = function () {
         var controller = controllers.items[i];
         for (var j = 0; j < pods.items.length; j++) {
             var pod = pods.items[j];
-            if (pod.metadata.labels && controller.metadata && controller.metadata.labels && controller.metadata.labels.run &&
-                pod.metadata.labels['run'] == controller.metadata.labels.run) {
+            if (pod.metadata && controller.spec &&
+                matchesLabelQuery(pod.metadata.labels, controller.spec.selector)) {
                 jsPlumb.connect({
                     source: controller.metadata.uid,
                     target: pod.metadata.uid,
@@ -189,6 +189,7 @@ var renderGroups = function () {
         }
         var div = $('<div/>');
         var x = 100;
+        var controllersCount = 0;
         $.each(list, function (index, value) {
             var eltDiv = null;
             if (value.type == "pod") {
@@ -201,8 +202,10 @@ var renderGroups = function () {
                 eltDiv.text(truncate(value.metadata.name, 20));
             } else {
                 eltDiv = $('<div class="window wide controller" id="' + value.metadata.uid +
-                    '" style="left: 900; top: ' + (y + 100) + '"/>');
+                    '" style="left: ' + (x + 300) + '; top: ' + (y + 100 + controllersCount * 100) +
+                    '"/>');
                 eltDiv.text(truncate(value.metadata.name, 20));
+                controllersCount += 1;
             }
             div.append(eltDiv);
             x += 130;
