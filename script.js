@@ -30,7 +30,7 @@ var groups = {};
 
 var insertByName = function (index, value) {
 
-    if (!value || !value.metadata.labels) {
+    if (!value || !value.metadata.labels || value.metadata.name == 'kubernetes') {
         return;
     }
     var list = groups[value.metadata.labels.run];
