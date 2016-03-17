@@ -52,8 +52,8 @@ var matchesLabelQuery = function (labels, selector) {
 
     if(!labels) { return false; }
 
-    $.each(labels, function (key, value) {
-        if (selector[key] !== value) {
+    $.each(selector, function (key, value) {
+        if (labels[key] !== value) {
             match = false;
         }
     });
