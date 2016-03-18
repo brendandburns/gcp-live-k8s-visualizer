@@ -267,6 +267,19 @@ var loadData = function () {
 }
 
 jsPlumb.bind("ready", function () {
+  reload()
+});
+
+var reload = function () {
+    $('#sheet').empty()
+    jsPlumb.reset()
+
+    pods = [];
+    services = [];
+    controllers = [];
+    uses = {};
+    groups = {};
+
     var instance = jsPlumb.getInstance({
         // default drag options
         DragOptions: {cursor: 'pointer', zIndex: 2000},
@@ -289,4 +302,6 @@ jsPlumb.bind("ready", function () {
         connectControllers();
     })
     jsPlumb.fire("jsPlumbDemoLoaded", instance);
-});
+
+    setTimeout(reload, 6000);
+};
