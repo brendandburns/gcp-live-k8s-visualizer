@@ -194,21 +194,21 @@ var renderGroups = function () {
             var eltDiv = null;
             if (value.type == "pod") {
                 eltDiv = $('<div class="window pod" id="' + value.metadata.uid +
-                    '" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
+                    '" style="left: ' + (x + 50) + '; top: ' + (y + 160) + '"/>');
             } else if (value.type == "service") {
                 eltDiv = $('<div class="window wide service" id="' + value.metadata.uid +
                     '" style="left: ' + 75 + '; top: ' + y + '"/>');
             } else {
                 eltDiv = $('<div class="window wide controller" id="' + value.metadata.uid +
-                    '" style="left: ' + (x + 300) + '; top: ' + (y + 100 + controllersCount * 100) +
+                    '" style="left: ' + (x + 80) + '; top: ' + (y + 100 + controllersCount * 100) +
                     '"/>');
                 controllersCount += 1;
             }
             span = $('<span />');
-            span.text(truncate(value.metadata.name, 8));
+            span.text(truncate(value.metadata.name, 17));
             eltDiv.append(span)
             div.append(eltDiv);
-            x += 130;
+            x += 180;
         });
         y += 400;
         serviceLeft += 200;
